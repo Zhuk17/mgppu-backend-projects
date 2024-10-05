@@ -1,0 +1,80 @@
+CREATE DATABASE medi_data_db;
+
+CREATE TABLE patients (
+    id SERIAL PRIMARY KEY,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE
+);
+
+CREATE TABLE medical_records (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id),
+    data JSONB NOT NULL
+);
+
+CREATE TABLE health_data (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id),
+ 
+    data JSONB NOT NULL
+);
+
+CREATE TABLE appointments (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id),
+    doctor_id INTEGER,
+    appointment_time TIMESTAMP NOT NULL,
+    status VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE recommendations (
+    id SERIAL PRIMARY KEY,
+    patient_id INTEGER REFERENCES patients(id),
+    recommendation TEXT NOT NULL
+);
+
+CREATE TABLE diseases (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL, 
+    markers JSONB NOT NULL, 
+    recommendations TEXT NOT NULL 
+);
+
+COMMENT ON TABLE patients IS 'Таблица пользователей';
+COMMENT ON COLUMN patients.id IS 'Уникальный идентификатор пользователя';
+COMMENT ON COLUMN patients.login IS 'Имя пользователя';
+COMMENT ON COLUMN patients.password_hash IS 'Хэш пароля';
+COMMENT ON COLUMN patients.email IS 'Электронная почта';
+
+COMMENT ON TABLE medical_records IS 'Таблица электронной медицинской карты';
+COMMENT ON COLUMN medical_records.id IS 'Уникальный идентификатор записи';
+COMMENT ON COLUMN medical_records.patient_id IS 'Идентификатор пользователя';
+COMMENT ON COLUMN medical_records.data IS 'Данные медицинской карты';
+
+
+COMMENT ON TABLE health_data IS 'Таблица мониторинга здоровья';
+COMMENT ON COLUMN health_data.id IS 'Уникальный идентификатор записи';
+COMMENT ON COLUMN health_data.patient_id IS 'Идентификатор пользователя';
+COMMENT ON COLUMN health_data.data IS 'Данные мониторинга здоровья';
+
+
+COMMENT ON TABLE appointments IS 'Таблица записей на прием';
+COMMENT ON COLUMN appointments.id IS 'Уникальный идентификатор записи';
+COMMENT ON COLUMN appointments.patient_id IS 'Идентификатор пользователя';
+COMMENT ON COLUMN appointments.doctor_id IS 'Идентификатор врача';
+COMMENT ON COLUMN appointments.appointment_time IS 'Время приема';
+COMMENT ON COLUMN appointments.status IS 'Статус записи';
+
+
+COMMENT ON TABLE recommendations IS 'Таблица рекомендаций';
+COMMENT ON COLUMN recommendations.id IS 'Уникальный идентификатор записи';
+COMMENT ON COLUMN recommendations.patient_id IS 'Идентификатор пользователя';
+COMMENT ON COLUMN recommendations.recommendation IS 'Текст рекомендации';
+
+COMMENT ON TABLE diseases IS 'Таблица заболеваний и их маркеров';
+COMMENT ON COLUMN diseases.id IS 'Уникальный идентификатор заболевания';
+COMMENT ON COLUMN diseases.name IS 'Название заболевания';
+COMMENT ON COLUMN diseases.markers IS 'Маркеры заболевания в формате JSON';
+COMMENT ON COLUMN diseases.recommendations IS 'Рекомендации по заболеванию';
+
